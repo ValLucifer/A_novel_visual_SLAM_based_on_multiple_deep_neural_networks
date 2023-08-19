@@ -1,0 +1,211 @@
+%YAML:1.0
+# 程序执行路径为当前路径
+
+# data
+# dataset_dir: ../dataset/KITTI/KITTI-odometry/KITTIOdometry_data_odometry_gray/dataset/sequences/00
+
+# EuRoc dataset directory
+dataset_dir: ../dataset/EuRoC/MH_03_medium/mav0
+EuRoc_timestampsfile: ./config/EuRoC_TimeStamps/MH03.txt
+
+# the tum dataset directory, change it to yours! 
+# dataset_dir: /home/xiang/dataset/rgbd_dataset_freiburg1_desk
+
+# 原始图像是否剪切及对应配置
+camera.cut: 1  # 1 is true, 0 is false
+camera.width: 752
+camera.height: 480
+camera.cut_width: 704 # 704 # 8的整数倍
+camera.cut_height: 432 # 432 # 8的整数倍
+
+
+# camera type
+camera.type: 1  # 0 is Mono, 1 is Stereo, 2 is RGBD
+
+# camera intrinisics
+# Camera calibration and distortion parameters (OpenCV) 
+# EuRoc
+camera.fx: 435.2046959714599
+camera.fy: 435.2046959714599
+camera.cx: 367.4517211914062
+camera.cy: 252.2008514404297
+
+# EuRoc
+camera.k1: 0.0
+camera.k2: 0.0
+camera.p1: 0.0
+camera.p2: 0.0
+# camera.k3: 0.15
+
+
+# TUM
+## fr1
+# camera.fx: 517.3
+# camera.fy: 516.5
+# camera.cx: 325.1
+# camera.cy: 249.7
+# camera.k1: 0.262383
+# camera.k2: -0.953104
+# camera.p1: -0.005358
+# Camera.p2: 0.002628
+# camera.p2: 1.163314
+
+## fr2
+#camera.fx: 520.9
+#camera.fy: 521.0
+#camera.cx: 325.1
+#camera.cy: 249.7
+
+# camera.depth_scale: 5000.0
+
+# stereo baseline times fx
+camera.bf: 47.90639384423901
+
+# 直接使用ORB-SLAM2的参数
+#--------------------------------------------------------------------------------------------
+# Stereo Rectification. Only if you need to pre-rectify the images.
+# Camera.fx, .fy, etc must be the same as in LEFT.P
+#--------------------------------------------------------------------------------------------
+LEFT.height: 480
+LEFT.width: 752
+LEFT.D: !!opencv-matrix
+   rows: 1
+   cols: 5
+   dt: d
+   data: [-0.28340811, 0.07395907, 0.00019359, 1.76187114e-05, 0.0]
+LEFT.K: !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [458.654, 0.0, 367.215, 0.0, 457.296, 248.375, 0.0, 0.0, 1.0]
+LEFT.R:  !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [0.999966347530033, -0.001422739138722922, 0.008079580483432283, 0.001365741834644127, 0.9999741760894847, 0.007055629199258132, -0.008089410156878961, -0.007044357138835809, 0.9999424675829176]
+LEFT.P:  !!opencv-matrix
+   rows: 3
+   cols: 4
+   dt: d
+   data: [435.2046959714599, 0, 367.4517211914062, 0,  0, 435.2046959714599, 252.2008514404297, 0,  0, 0, 1, 0]
+
+RIGHT.height: 480
+RIGHT.width: 752
+RIGHT.D: !!opencv-matrix
+   rows: 1
+   cols: 5
+   dt: d
+   data: [-0.28368365, 0.07451284, -0.00010473, -3.555907e-05, 0.0]
+RIGHT.K: !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [457.587, 0.0, 379.999, 0.0, 456.134, 255.238, 0.0, 0.0, 1]
+RIGHT.R:  !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [0.9999633526194376, -0.003625811871560086, 0.007755443660172947, 0.003680398547259526, 0.9999684752771629, -0.007035845251224894, -0.007729688520722713, 0.007064130529506649, 0.999945173484644]
+RIGHT.P:  !!opencv-matrix
+   rows: 3
+   cols: 4
+   dt: d
+   data: [435.2046959714599, 0, 367.4517211914062, -47.90639384423901, 0, 435.2046959714599, 252.2008514404297, 0, 0, 0, 1, 0]
+
+
+
+# model weight
+sg_superpoint: ./sg_weight/superpoint_v1.pt
+# supergule: ./sg_weight/superglue_indoor.pt
+supergule: ./sg_weight/superglue_outdoor.pt
+# sp_gpu_id: -1
+# sg_gpu_id: -1
+sp_gpu_id: 0
+sg_gpu_id: 0
+sg_LR_match_threshold: 0.2
+sg_Track_match_threshold: 0.2
+sg_loop_match_threshold: 0.2
+
+# DeepLCD dir
+LCD_network_definition_file: ./calc_model/deploy.prototxt
+LCD_pre_trained_model_file: ./calc_model/calc.caffemodel
+
+#--------------------------------------------------------------------------------------------
+# Map Parameters
+#--------------------------------------------------------------------------------------------
+Map_num_active_keyframes: 7 # 14 # 7 
+Map_active_keyframe_pose_min_dis_threshold: 0.2 # 0.2
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#--------------------------------------------------------------------------------------------
+Viewer_running_flag: 1  # 1 is true, 0 is false.
+Viewer_cv_wait_mT: 1  # ms 
+Viewer.ViewpointX: 0
+Viewer.ViewpointY: -0.7 # -500
+Viewer.ViewpointZ: -1.8 # -0.1
+Viewer.ViewpointF: 500 # 1000 # 100 # 1000
+
+#--------------------------------------------------------------------------------------------
+# Backend Parameters
+#--------------------------------------------------------------------------------------------
+# 自由度为2， 标准差为1个像素(已白化或假定测量特征点位置标准差为1个像素), 置信度为95%(alpha=0.05)的分位数(分位点)
+Backend_edge_robust_kernel_chi2_th: 5.991  
+Backend_optimized_iter: 8 # 5 # 15 # 10
+Backend_max_iteration: 10 # 5
+
+#--------------------------------------------------------------------------------------------
+# LoopClosing Parameters
+#--------------------------------------------------------------------------------------------
+LoopClosing_lcd_similarityScoreThreshold_high: 0.94 # 0.94
+LoopClosing_lcd_similarityScoreThreshold_low: 0.92 # 0.92
+# the system won't do loop detection until the number of KFs in database is more than this threshold
+# # 被读入程序的类型是int, 但读入后会立刻强制转换为unsigned long, 故需按unsigned long填充
+LoopClosing_nDatabaseMinSize: 50 # 50 # 50
+# if you want to see the match and reprojection result, please set this as 1
+# note that normally the system doesn't need to store KF's image but only the descriptors
+# but if you set this as 1, then it needs to store KF's image just for the show
+LoopClosing_show_LoopClosing_result_flag: 0  # 1 is true, 0 is false
+# LoopClosing_insert_loopclosing_interval KFs following the last closed KF will not be inserted
+# 被读入程序的类型是int, 但读入后会立刻强制转换为unsigned long, 故需按unsigned long填充
+LoopClosing_insert_loopclosing_interval: 5 # 5
+# 之前的回环帧加入 PoseGraphOptimization 优化约束边的最大个数(不包括当前回环帧).
+# # 被读入程序的类型是int, 但读入后会立刻强制转换为unsigned long, 故需按unsigned long填充
+LoopClosing_pose_graphloop_edge_num: 3
+# PoseGraphOptimization 保持最早/最旧优化回环约束边最大数量
+# # 被读入程序的类型是int, 但读入后会立刻强制转换为unsigned long, 故需按unsigned long填充
+LoopClosing_pose_graph_most_old_loop_edge_num: 5
+
+LoopClosing_ratio_features_th: 0.10 # 0.10
+
+# 是否启用回环模块标志
+LoopClosing_used_flag: 1 # 1 is true, 0 is false
+
+#--------------------------------------------------------------------------------------------
+# Frontend Parameters
+#--------------------------------------------------------------------------------------------
+Frontend_num_features_Threshold_init: 100 # 300 
+# Frontend_num_features_Threshold_tracking: 200 # 225 # 150 # 100 # 50
+# Frontend_num_features_Threshold_tracking_bad: 90 # 60 # 40 # 20  # 10
+
+Frontend_ratio_features_th_tracking: 0.12 # 0.35 # 0.35 # 0.34 # 0.145
+Frontend_ratio_features_th_tracking_bad: 0.04 # 0.175 # 0.175 # 0.17 # 0.07
+Frontend_num_fearures_tracking_min: 10 
+
+Frontend_max_keypoints_init: 2000 # 1500 
+Frontend_max_keypoints_tracking: 2000 # 1500 
+Frontend_max_keypoints_key_R: 2000 # 1500 # 1500 # 1000 # 700 # 500 # 350 # 300 # 1000
+Frontend_mappoint_camera_depth_max: 20.0 # 40.0 # 100 # 1000.0
+Frontend_mappoint_camera_depth_min: 0.3 # 0.3 # 0.0
+Frontend_mappoint_camera_x_max: 1000.0 # 100.0 # 7000.0
+Frontend_mappoint_camera_x_min: -1000.0 # -100.0 # -7000.0
+Frontend_mappoint_camera_y_max: 50 # 7000.0  # 零平面以下
+Frontend_mappoint_camera_y_min: -7000.0 # 零平面以上
+
+Frontend_mappoint_camera_z_track_max: 20.0 
+Frontend_mappoint_camera_z_track_min: 0.3 
+
+# 是否使用匀速模型先验标志
+Frontend_constant_speed_flag: 0 # 1 is true, 0 is false
+
+
